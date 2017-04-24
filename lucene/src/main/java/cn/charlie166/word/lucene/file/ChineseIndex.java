@@ -1,4 +1,4 @@
-package cn.charlie166.word.lucene;
+package cn.charlie166.word.lucene.file;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -126,7 +126,7 @@ public class ChineseIndex {
 	public void indexDoc(IndexWriter writer, Path file, long lastModified) throws IOException{
 		try (InputStream stream = Files.newInputStream(file)) {
 			String s = "contents";
-			Analyzer analyzer = writer.getAnalyzer();
+			/*Analyzer analyzer = writer.getAnalyzer();
 			TokenStream tokenStream = analyzer.tokenStream(s, new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
 			OffsetAttribute offsetAttribute = tokenStream.addAttribute(OffsetAttribute.class);
             TypeAttribute typeAttribute = tokenStream.addAttribute(TypeAttribute.class);
@@ -139,12 +139,12 @@ public class ChineseIndex {
                 logger.debug(s1 + "[" + i1 + "," + i2 + ":" + typeAttribute.type() + "]" + " ");
             }
             tokenStream.end();
-            tokenStream.close();
+            tokenStream.close();*/
 			Document doc = new Document();
 			Field pathField = new StringField("path", file.toString(), Field.Store.YES);
 		    doc.add(pathField);
 		    doc.add(new LongPoint("modified", lastModified));
-		    doc.add(new TextField("contents", new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))));
+		    doc.add(new TextField(s, new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))));
 		    doc.add(new StoredField("title", file.getFileName().toString()));
 		    doc.add(new StringField("id", String.valueOf(file.toString().hashCode()), Field.Store.YES));
 		    if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {

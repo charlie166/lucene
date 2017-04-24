@@ -1,4 +1,4 @@
-package cn.charlie166.word.lucene;
+package cn.charlie166.word.lucene.file;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,13 +18,14 @@ public class App {
     	System.setProperty("log4j.configurationFile", "log4j2.xml");
     	
     	
-    	String txtDirection = App.class.getResource("/files").getPath();
-		final Path docDir = Paths.get(txtDirection);
-		ChineseIndex ci = new ChineseIndex();
-		ci.buildFromPath(docDir);
+//    	String txtDirection = App.class.getResource("/files").getPath();
+//    	String txtDirection = "F:/charlie/documents/work/lucene";
+//		final Path docDir = Paths.get(txtDirection);
+//		ChineseIndex ci = new ChineseIndex();
+//		ci.buildFromPath(docDir);
     	try {
-//    		ChineseSearch cs = new ChineseSearch();
-//    		cs.query("数据");
+    		ChineseSearch cs = new ChineseSearch();
+    		cs.query("数据");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

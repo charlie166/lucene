@@ -1,4 +1,4 @@
-package cn.charlie166.word.lucene;
+package cn.charlie166.word.lucene.file;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -13,6 +13,9 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -45,12 +48,24 @@ public class ChineseSearch {
 	    IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
 	    IndexSearcher searcher = new IndexSearcher(reader);
 //	    Analyzer analyzer = new SmartChineseAnalyzer();
-	    Analyzer analyzer = new JcsegAnalyzer(JcsegTaskConfig.COMPLEX_MODE);
+	    JcsegAnalyzer analyzer = new JcsegAnalyzer(JcsegTaskConfig.SEARCH_MODE);
 	    QueryParser parser = new QueryParser(field, analyzer);
 	    Query query = parser.parse(queryString);
+	    if(query instanceof BooleanQuery){
+	    	BooleanQuery.Builder bqb = new BooleanQuery.Builder();
+	    	BooleanQuery bq = (BooleanQuery) query;
+	    	for(BooleanClause bc : bq.clauses()){
+	    		BooleanClause nbc = new BooleanClause(bc.getQuery(), Occur.MUST);
+	    		bqb.add(nbc);
+	    	}
+	    	BooleanQuery thisQuery = bqb.build();
+	    	logger.debug("Searching for: " + thisQuery.toString(queryString));
+	    	doPagingSearch(searcher, thisQuery, hitsPerPage, raw);
+	    } else {
+	    	logger.debug("Searching for: " + query.toString(queryString));
+	    	doPagingSearch(searcher, query, hitsPerPage, raw);
+	    }
 //	    FuzzyQuery query = new FuzzyQuery(new Term(field, queryString), 2);
-	    logger.debug("Searching for: " + query.toString(queryString));
-	    doPagingSearch(searcher, query, hitsPerPage, raw);
 	    reader.close();
 	}
 	
@@ -88,11 +103,10 @@ public class ChineseSearch {
 	        	if (title != null) {
 	        		logger.debug("Title: " + doc.get("title"));
 	        	}
+	        	logger.debug("content:" + FileUtils.readFile(path));
 	        } else {
 	        	logger.debug((i+1) + ". " + "No path for this document");
 	        }
-	        String contents = doc.get("contents");
-	        logger.debug("contents:" + contents);
 	    }
 	}
 }
