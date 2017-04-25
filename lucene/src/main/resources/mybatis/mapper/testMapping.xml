@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.charlie166.word.lucene.db.mapper.TestMapper">
+	
+	<!-- 查询通知公告所有数据 -->
+	<select id="selectAdvice" parameterType="map" resultType="map">
+		SELECT a.* FROM ds_advice a
+	</select>
+	
+	<!-- 查询列表 -->
+	<select id="selectList" parameterType="map" resultType="map">
+		SELECT a.* FROM ${table_name} a
+	</select>
+	
+	<!-- 通过ID查询 -->
+	<select id="selectById" parameterType="map" resultType="map">
+		SELECT a.* FROM ${table_name} a
+		WHERE a.id = #{id}
+	</select>
+</mapper>

@@ -1,7 +1,13 @@
 package cn.charlie166.word.lucene.file;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.apache.lucene.queryparser.classic.ParseException;
+
+import cn.charlie166.word.lucene.db.IndexSearch;
+import cn.charlie166.word.lucene.db.InfoIndex;
 
 /**
 * @ClassName: App 
@@ -14,7 +20,7 @@ import java.nio.file.Paths;
  */
 public class App {
 	
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ParseException {
     	System.setProperty("log4j.configurationFile", "log4j2.xml");
     	
     	
@@ -24,10 +30,14 @@ public class App {
 //		ChineseIndex ci = new ChineseIndex();
 //		ci.buildFromPath(docDir);
     	try {
-    		ChineseSearch cs = new ChineseSearch();
-    		cs.query("数据");
+//    		ChineseSearch cs = new ChineseSearch();
+//    		cs.query("依赖");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+//    	InfoIndex ii = new InfoIndex();
+//    	ii.indexData();
+		IndexSearch is = new IndexSearch();
+		is.queryString("学校");
     }
 }

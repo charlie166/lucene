@@ -43,7 +43,6 @@ public class ChineseSearch {
 	public void query(String queryString) throws IOException, ParseException{
 		String index = "index";
 	    String field = "contents";
-	    boolean raw = false;
 	    int hitsPerPage = 10;
 	    IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
 	    IndexSearcher searcher = new IndexSearcher(reader);
@@ -60,10 +59,10 @@ public class ChineseSearch {
 	    	}
 	    	BooleanQuery thisQuery = bqb.build();
 	    	logger.debug("Searching for: " + thisQuery.toString(queryString));
-	    	doPagingSearch(searcher, thisQuery, hitsPerPage, raw);
+	    	doPagingSearch(searcher, thisQuery, hitsPerPage);
 	    } else {
 	    	logger.debug("Searching for: " + query.toString(queryString));
-	    	doPagingSearch(searcher, query, hitsPerPage, raw);
+	    	doPagingSearch(searcher, query, hitsPerPage);
 	    }
 //	    FuzzyQuery query = new FuzzyQuery(new Term(field, queryString), 2);
 	    reader.close();
@@ -75,11 +74,9 @@ public class ChineseSearch {
 	* @param searcher
 	* @param query
 	* @param hitsPerPage
-	* @param raw
 	* @throws IOException
 	 */
-	public void doPagingSearch(IndexSearcher searcher, Query query, 
-            int hitsPerPage, boolean raw) throws IOException{
+	public void doPagingSearch(IndexSearcher searcher, Query query, int hitsPerPage) throws IOException{
 		TopDocs results = searcher.search(query, 5 * hitsPerPage);
 	    ScoreDoc[] hits = results.scoreDocs;
 	    int numTotalHits = results.totalHits;
@@ -91,14 +88,10 @@ public class ChineseSearch {
 	    }
 	    end = Math.min(hits.length, start + hitsPerPage);
 	    for (int i = start; i < end; i++) {
-	    	if (raw) {
-	    		logger.debug("doc=" + hits[i].doc + " score=" + hits[i].score);
-	        	continue;
-	        }
 	    	Document doc = searcher.doc(hits[i].doc);
 	        String path = doc.get("path");
 	        if (path != null) {
-	        	logger.debug((i + 1) + ". " + path);
+	        	logger.debug((i + 1) + ". " + path + " score=" + hits[i].score);
 	        	String title = doc.get("title");
 	        	if (title != null) {
 	        		logger.debug("Title: " + doc.get("title"));
