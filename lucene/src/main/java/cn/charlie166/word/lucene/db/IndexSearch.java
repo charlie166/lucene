@@ -72,10 +72,10 @@ public class IndexSearch {
 	    		newQuery.add(nbc);
 	    	}
 	    	BooleanQuery thisQuery = newQuery.build();
-	    	logger.debug("[1]content:Searching for: " + thisQuery.toString());
+	    	logger.debug("[1]content: Searching for: " + thisQuery.toString());
 	    	bqb.add(thisQuery, BooleanClause.Occur.SHOULD);
 	    } else {
-	    	logger.debug("[2]content:Searching for: " + contentQuery.toString());
+	    	logger.debug("[2]content: Searching for: " + contentQuery.toString());
 	    	bqb.add(contentQuery, BooleanClause.Occur.SHOULD);
 	    }
 	    this.doPagingSearch(searcher, bqb.build(), hitsPerPage);
