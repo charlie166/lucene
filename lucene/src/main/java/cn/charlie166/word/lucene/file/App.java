@@ -31,13 +31,13 @@ public class App {
 //		ci.buildFromPath(docDir);
     	try {
 //    		ChineseSearch cs = new ChineseSearch();
-//    		cs.query("依赖");
+//    		cs.query("provided");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 //    	InfoIndex ii = new InfoIndex();
 //    	ii.indexData();
 		IndexSearch is = new IndexSearch();
-		is.queryString("学校");
+		is.queryString("学校", 15);
     }
 }

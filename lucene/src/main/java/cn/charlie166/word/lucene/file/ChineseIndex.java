@@ -29,8 +29,12 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.PrintStreamInfoStream;
 import org.lionsoul.jcseg.analyzer.JcsegAnalyzer;
 import org.lionsoul.jcseg.tokenizer.core.JcsegTaskConfig;
 import org.slf4j.Logger;
@@ -72,6 +76,7 @@ public class ChineseIndex {
 //			Analyzer analyzer = new SmartChineseAnalyzer();
 			Analyzer analyzer = new JcsegAnalyzer(JcsegTaskConfig.COMPLEX_MODE);
 			IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
+			iwc.setInfoStream(new PrintStreamInfoStream(System.out));
 			if (create) {
 		        /**在索引路径下创建新的索引文件，删除原来的**/
 				iwc.setOpenMode(OpenMode.CREATE);
@@ -155,5 +160,30 @@ public class ChineseIndex {
 		        writer.updateDocument(new Term("path", file.toString()), doc);
 		    }
 		}
+	}
+	
+	public static void main(String[] args) throws IOException, ParseException {
+		Logger logger = LoggerFactory.getLogger(ChineseIndex.class);
+		Analyzer analyzer = new JcsegAnalyzer(JcsegTaskConfig.COMPLEX_MODE);
+		String s = "contents";
+		String con = "花枝招展黑珍珠休息休息好想好想哈羽毛球";
+		TokenStream tokenStream = analyzer.tokenStream(s, con);
+		OffsetAttribute offsetAttribute = tokenStream.addAttribute(OffsetAttribute.class);
+        TypeAttribute typeAttribute = tokenStream.addAttribute(TypeAttribute.class);
+        tokenStream.reset();
+        while (tokenStream.incrementToken()) {
+            String s1 = offsetAttribute.toString();
+            int i1 = offsetAttribute.startOffset();//起始偏移量
+            int i2 = offsetAttribute.endOffset();//结束偏移量
+            logger.debug(s1 + "[" + i1 + "," + i2 + ":" + typeAttribute.type() + "]" + " ");
+        }
+        tokenStream.end();
+        tokenStream.close();
+        String queryString = "羽毛球";
+        JcsegAnalyzer queryAnalyzer = new JcsegAnalyzer(JcsegTaskConfig.SEARCH_MODE);
+	    QueryParser parser = new QueryParser(s, queryAnalyzer);
+	    Query query = parser.parse(queryString);
+	    logger.debug("查询解析:" + query.toString());
+        analyzer.close();
 	}
 }

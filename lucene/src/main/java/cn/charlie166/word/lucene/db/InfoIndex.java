@@ -81,6 +81,7 @@ public class InfoIndex {
 		Directory dir = FSDirectory.open(Paths.get(CommonAttributes.INDEX_STORE));
 		logger.debug("索引位置:" + dir.toString());
 		Analyzer analyzer = new JcsegAnalyzer(JcsegTaskConfig.COMPLEX_MODE);
+//		Analyzer analyzer = new SmartChineseAnalyzer();
 		IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 		/** 追加 **/
 		iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
